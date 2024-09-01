@@ -1,0 +1,9 @@
+.gitignore
+.venv/
+**/.DS_Store
+**/__pycache__
+**/.ipynb_checkpoints
+*.log
+*.pickle
+*.pid
+*.out
