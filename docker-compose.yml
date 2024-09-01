@@ -1,0 +1,39 @@
+services:
+    costs_bot:
+        container_name: costs_bot
+        build: ./
+        image: costs_bot:latest
+        restart: on-failure
+        env_file:
+            - .venv/.env
+        secrets:
+            - POSTGRES_PASSWORD
+        ports:
+            - "80:80"
+        volumes:
+            - bot:/bot/
+        depends_on:
+            - postgres
+
+    postgres:
+        container_name: postgres
+        image: postgres:latest
+        restart: on-failure
+        env_file:
+            - .venv/.env
+        secrets:
+            - POSTGRES_PASSWORD
+        ports:
+            - "5432:5432"
+        volumes:
+            - db_data:/postgres/
+
+volumes:
+    bot:
+    db_data:
+
+secrets:
+    TOKEN:
+        file: .venv/.env
+    POSTGRES_PASSWORD:
+        file: .venv/.env
