@@ -2,7 +2,7 @@
 
 Name: CostsBot\
 About: Cost accounting\
-Description: The bot can add/delete costs and make reports\
+Description: The bot can add/delete costs and create reports\
 Description picture: 🚫 no description picture\
 Botpic: 🖼 has a botpic\
 Commands: 8 commands\
