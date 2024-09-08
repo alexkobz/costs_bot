@@ -9,7 +9,7 @@ services:
         secrets:
             - POSTGRES_PASSWORD
         ports:
-            - "80:80"
+            - "88:80"
         volumes:
             - bot:/bot/
         depends_on:
@@ -19,18 +19,21 @@ services:
         container_name: postgres
         image: postgres:latest
         restart: on-failure
+        environment:
+            TZ: Etc/UTC
         env_file:
             - .venv/.env
         secrets:
             - POSTGRES_PASSWORD
         ports:
-            - "5432:5432"
+            - "5433:5432"
         volumes:
-            - db_data:/postgres/
+            - db_data:/var/lib/postgresql/data
 
 volumes:
     bot:
     db_data:
+        driver: local
 
 secrets:
     TOKEN:

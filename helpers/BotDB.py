@@ -1,15 +1,13 @@
 """ Работа с расходами — их добавление, удаление, статистики"""
-import logging
 from os import environ
 import psycopg
 import pandas as pd
-import pandas.io.sql as sqlio
 from typing import List, NamedTuple, Tuple, Optional
-from datetime import date
+from datetime import date, datetime as dt
 
 from aiogram.types import Message, User
 
-from helpers.get_now import get_now, get_now_str
+from helpers.get_now import get_now
 from helpers.parse_message import (Parsed_Add_Expense_Message,
                                    Parsed_Delete_Expense_Message,
                                    Parsed_Edit_Expense_Message,
@@ -25,7 +23,7 @@ class Expense(NamedTuple):
     message_id: int
     amount: float
     category: str
-    created: str
+    created: date
 
 
 
@@ -53,7 +51,7 @@ class BotDB(psycopg.Cursor):
     async def create_user(self, utc_offset_minutes: int) -> str:
         user_exists = await self.user_exists()
         if not user_exists:
-            added_date: str = await get_now_str(utc_offset_minutes)
+            added_date: dt = await get_now(utc_offset_minutes)
             self.execute("INSERT INTO users (id, first_name, is_bot, language_code, added_date, utc_offset) VALUES (%s, %s, %s, %s, %s, %s);",
                          (self.user.id, self.user.first_name.replace("'", "").replace('"', ""), self.user.is_bot,
                           self.user.language_code, added_date, utc_offset_minutes,))
@@ -69,7 +67,7 @@ class BotDB(psycopg.Cursor):
         """Добавляет новый расход.
         Принимает на вход текст сообщения, пришедшего в бот."""
         parsed_message: Parsed_Add_Expense_Message = await parse_add_expense_message(message.text)
-        created: str = await get_now_str(utc_offset_minutes)
+        created: dt = await get_now(utc_offset_minutes)
         row: tuple = self.execute(
             """
             INSERT INTO costs (user_id, message_id, amount, category, created) 
@@ -88,7 +86,7 @@ class BotDB(psycopg.Cursor):
                 (self.user.id,)
             ).fetchone()
             if not row_id:
-                return Expense(-1, -1, -1, -1, "", "")
+                return Expense(-1, -1, -1, -1, "", date(1900, 1, 1))
             else:
                 row_id: int = row_id[0]
         else:
@@ -103,18 +101,18 @@ class BotDB(psycopg.Cursor):
             row_id, user_id, message_id, amount, category, created = row
             return Expense(row_id, user_id, message_id, amount, category, created)
         else:
-            return Expense(-1, -1, -1, -1, "", "")
+            return Expense(-1, -1, -1, -1, "", date(1900, 1, 1))
 
     async def edit_expense(self, message: Message) -> Expense:
         """Удаляет сообщение по его идентификатору"""
         parsed_message: Parsed_Edit_Expense_Message = await parse_edit_expense_message(raw_message=message.text)
         row_id, amount, category = parsed_message.row_id, parsed_message.amount, parsed_message.category
         exists: bool = self.execute(
-            f"""SELECT EXISTS (SELECT 1 FROM costs WHERE user_id = %s AND WHERE id = %s);""",
+            f"""SELECT EXISTS (SELECT 1 FROM costs WHERE user_id = %s AND id = %s);""",
             (self.user.id, row_id,)
         ).fetchone()
         if not exists:
-            return Expense(-1, -1, -1, -1, "", "")
+            return Expense(-1, -1, -1, -1, "", date(1900, 1, 1))
         else:
             row: Optional[tuple] = self.execute(
                 f"""UPDATE costs SET amount = %s, category = %s WHERE user_id = %s AND id = %s RETURNING *;""",
@@ -125,7 +123,7 @@ class BotDB(psycopg.Cursor):
                 row_id, user_id, message_id, amount, category, created = row
                 return Expense(row_id, user_id, message_id, amount, category, created)
             else:
-                return Expense(-1, -1, -1, -1, "", "")
+                return Expense(-1, -1, -1, -1, "", date(1900, 1, 1))
 
     async def get_report(self, date_start: date, date_finish: date) -> pd.DataFrame:
         date_start, date_finish = date_start.strftime("%Y-%m-%d"), date_finish.strftime("%Y-%m-%d")
@@ -143,10 +141,10 @@ class BotDB(psycopg.Cursor):
         """Возвращает последние несколько расходов"""
         rows: list = self.execute(
             """
-            SELECT id, user_id, message_id, amount, category, substring(created, 1, 10) as created
+            SELECT id, user_id, message_id, amount, category, date(created) as created
             FROM costs 
             WHERE user_id = %s
-            ORDER BY datetime(created) DESC LIMIT 10;""",
+            ORDER BY created DESC LIMIT 10;""",
             (self.user.id,)
         ).fetchall()
         last_expenses: List[Expense] = [Expense(row_id=row[0],

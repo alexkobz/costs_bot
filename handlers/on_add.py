@@ -1,5 +1,3 @@
-import logging
-
 from aiogram import Router, F
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
@@ -28,8 +26,8 @@ async def add(message: Message, state: FSMContext):
     user: User = message.from_user
     try:
         utc_offset_minutes, answer_message, builder = await get_utc_offset(user=user)
-    except Exception as e:
-        await message.answer(str(e))
+    except Exception:
+        await message.answer("Something went wrong")
         return
     if utc_offset_minutes is None:
         await message.answer(text=answer_message, reply_markup=builder.as_markup(resize_keyboard=True))
@@ -43,9 +41,8 @@ async def add(message: Message, state: FSMContext):
     except AddExpenseMessageException as e:
         await message.answer(str(e))
         return
-    except Exception as e:
-        logging.exception(str(e))
-        await message.answer(str(e))
+    except Exception:
+        await message.answer("Something went wrong")
         return
     finally:
         await state.clear()

@@ -17,8 +17,8 @@ async def on_last(message: Message):
     cursor: BotDB = BotDB(user=user)
     try:
         expenses: List[Expense] = await cursor.get_last()
-    except Exception as e:
-        await message.answer(str(e))
+    except Exception:
+        await message.answer("Something went wrong")
         return
     finally:
         cursor.close()
