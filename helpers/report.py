@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import date
+from datetime import date, datetime as dt
 from matplotlib.axes._axes import Axes
 from matplotlib.figure import Figure
 from prettytable import PrettyTable
@@ -15,7 +15,7 @@ from helpers.get_utc_offset import get_utc_offset
 
 
 async def report(call: CallbackQuery, state: FSMContext,
-                 date_start=date(2022, 1, 1), date_finish=date.today()):
+                 date_start=date(2000, 1, 1), date_finish=date.today()):
     user: User = call.from_user
     try:
         utc_offset_minutes, answer_message, builder = await get_utc_offset(user=user)
@@ -60,8 +60,10 @@ async def report(call: CallbackQuery, state: FSMContext,
         )
         ax.bar_label(ax.containers[0])
         fig: Figure = ax.get_figure()
-        fig.savefig(f'report.png', dpi=300)
-        report_file: FSInputFile = FSInputFile(f'report.png')
+        fname: str = f'report.png'
+        fig.savefig(fname, dpi=300)
+        report_file: FSInputFile = FSInputFile(fname)
+        fig.clf()
         await call.message.answer_photo(report_file)
 
         table = PrettyTable(['Category', 'Amount'])

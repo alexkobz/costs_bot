@@ -19,10 +19,11 @@ router = Router()
 
 @router.message(Command('report', prefix="/"))
 async def on_report(message: Message, state: FSMContext):
-    """Show report"""
+    """To show the report"""
     builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
     for period in report_period:
         builder.add(InlineKeyboardButton(callback_data=period, text=report_period[period]))
+    builder.adjust(2)
     await message.answer(text="Select period:",
                          reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(Form.date_start)
@@ -53,6 +54,8 @@ async def report_period_callback(call: CallbackQuery, state: FSMContext):
             date_start: date = today - timedelta(days=today.weekday())
         case "report_month":
             date_start: date = (today - offsets.MonthBegin(n=1)).to_pydatetime().date()
+        case "report_all":
+            date_start: date = date(2000, 1, 1)
         case "report_custom":
             await call.message.delete()
             await call.message.answer(
@@ -62,6 +65,7 @@ async def report_period_callback(call: CallbackQuery, state: FSMContext):
             await state.set_state(Form.date_start)
             return
         case _:
+            await call.message.delete()
             raise Exception
 
     await state.clear()

@@ -12,7 +12,7 @@ router = Router()
 
 @router.message(Command('last', prefix="/"))
 async def on_last(message: Message):
-    """Show last 10 costs"""
+    """To show the last 10 costs"""
     user: User = message.from_user
     cursor: BotDB = BotDB(user=user)
     try:
@@ -28,9 +28,9 @@ async def on_last(message: Message):
         await message.answer("There are no costs")
         return
 
-    table = PrettyTable(['Category', 'Amount', 'Created'])
-    table.align['Category'], table.align['Amount'], table.align['Created'] = 'l', 'l', 'l'
+    table = PrettyTable(['Category', 'Amount', 'Created', 'ID'])
+    table.align['Category'], table.align['Amount'], table.align['Created'], table.align['ID'] = 'l', 'l', 'l', 'l'
     for expense in expenses:
-        table.add_row([f"{expense.category.title()}", expense.amount, expense.created])
+        table.add_row([f"{expense.category.title()}", expense.amount, expense.created, expense.row_id])
 
     await message.answer(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)

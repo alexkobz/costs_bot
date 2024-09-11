@@ -2,6 +2,7 @@ from re import compile as regex_compile, Pattern
 from exceptions.NotCorrectMessage import (AddExpenseMessageException,
                                           DeleteExpenseMessageException,
                                           EditExpenseMessageException)
+from exceptions.Cancel import Cancel
 from typing import NamedTuple, List, AnyStr
 from dataclasses import dataclass
 
@@ -46,6 +47,8 @@ async def parse_add_expense_message(raw_message: str) -> Parsed_Add_Expense_Mess
             amount: float = float(message[0])
             category: str = " ".join(message[1:])
             return Parsed_Add_Expense_Message(amount, category)
+        case '/cancel':
+            raise Cancel("Canceled")
         case _:
             raise AddExpenseMessageException("Cannot parse\nPlease write according to this template: amount category\n"
                                              "For example: 100 taxi")
@@ -58,6 +61,8 @@ async def parse_delete_expense_message(raw_message: str) -> Parsed_Delete_Expens
         case r"(\d+)":
             row_id: int = int(message)
             return Parsed_Delete_Expense_Message(row_id)
+        case '/cancel':
+            raise Cancel("Canceled")
         case _:
             raise DeleteExpenseMessageException("Cannot parse\nPlease write according to this template: id\n"
                                                 "For example: 23")
@@ -79,6 +84,8 @@ async def parse_edit_expense_message(raw_message: str) -> Parsed_Edit_Expense_Me
             amount: float = float(message[1])
             category: str = " ".join(message[2:])
             return Parsed_Edit_Expense_Message(row_id, amount, category)
+        case '/cancel':
+            raise Cancel("Canceled")
         case _:
             raise EditExpenseMessageException("Cannot parse\nPlease write according to this template: "
                                               "id amount category\nFor example: 23 100 taxi")

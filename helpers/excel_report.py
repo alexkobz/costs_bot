@@ -11,7 +11,7 @@ from helpers.get_utc_offset import get_utc_offset
 
 
 async def excel_report(call: CallbackQuery, state: FSMContext,
-                       date_start=date(2022, 1, 1), date_finish=date.today()):
+                       date_start=date(2000, 1, 1), date_finish=date.today()):
     user: User = call.from_user
     try:
         utc_offset_minutes, answer_message, builder = await get_utc_offset(user=user)

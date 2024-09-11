@@ -9,7 +9,7 @@ router = Router()
 
 @router.message(Command('delete', prefix="/"))
 async def on_delete(message: Message):
-    """Удалить последний расход"""
+    """To delete the last cost"""
     user: User = message.from_user
     cursor: BotDB = BotDB(user=user)
     try:

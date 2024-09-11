@@ -32,6 +32,7 @@ report_period = {
     "report_yesterday": "Yesterday",
     "report_week": "Week",
     "report_month": "Month",
+    "report_all": "All",
     "report_custom": "Custom",
 }
 
@@ -40,5 +41,6 @@ excel_period = {
     "excel_yesterday": "Yesterday",
     "excel_week": "Week",
     "excel_month": "Month",
+    "excel_all": "All",
     "excel_custom": "Custom",
 }

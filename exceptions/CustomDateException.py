@@ -1,13 +1,13 @@
 class CustomDateException(Exception):
-    """Ошибка в выборе даты"""
+    """Error selecting date"""
     pass
 
 
 class StartDateException(CustomDateException):
-    """Ошибка в выборе начальной даты"""
+    """Error selecting start date"""
     pass
 
 
 class EndDateException(CustomDateException):
-    """Ошибка в выборе конечной даты"""
+    """Error selecting end date"""
     pass

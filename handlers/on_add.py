@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.types import Message, User
 
+from exceptions.Cancel import Cancel
 from exceptions.NotCorrectMessage import AddExpenseMessageException
 from helpers.BotDB import BotDB, Expense
 from helpers.Form import Form
@@ -14,7 +15,7 @@ router = Router()
 
 @router.message(Command('add', prefix="/"))
 async def on_add(message: Message, state: FSMContext):
-    """Добавить расход"""
+    """To add the cost"""
     await message.answer("Please write according to this template: amount category\nFor example: 100 taxi")
     await state.set_state(Form.add)
 
@@ -22,7 +23,7 @@ async def on_add(message: Message, state: FSMContext):
 @router.message(StateFilter(Form.add))
 @router.message(~F.text.startswith("/"), StateFilter(default_state))
 async def add(message: Message, state: FSMContext):
-    """Добавить расход"""
+    """To add the cost"""
     user: User = message.from_user
     try:
         utc_offset_minutes, answer_message, builder = await get_utc_offset(user=user)
@@ -38,6 +39,9 @@ async def add(message: Message, state: FSMContext):
     try:
         await state.update_data(add=message.text)
         expense: Expense = await cursor.add_expense(message, utc_offset_minutes)
+    except Cancel as e:
+        await message.answer(str(e))
+        return
     except AddExpenseMessageException as e:
         await message.answer(str(e))
         return

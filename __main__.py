@@ -15,7 +15,7 @@ Commands:
     /excel - Export report in Excel file
     /last - Show the last 10 costs
     /help - Show help
-    /timezone - Change the timezone
+    /cancel - Change the timezone
 """
 
 __author__ = "Alexander Kobzar"
@@ -37,7 +37,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from handlers import (on_add, on_delete, on_delete_id, on_edit_id, on_excel, on_help, on_last, on_report, on_start,
-                      on_timezone, process_custom_date, utc_offset)
+                      on_cancel, process_custom_date, utc_offset)
 
 
 async def main() -> None:
@@ -58,7 +58,7 @@ async def main() -> None:
         on_help.router,
         on_last.router,
         on_report.router,
-        on_timezone.router,
+        on_cancel.router,
         process_custom_date.router,
         utc_offset.router
     ]

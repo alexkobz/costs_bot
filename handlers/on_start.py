@@ -12,7 +12,7 @@ router = Router()
 
 @router.message(Command("start", prefix="/"))
 async def on_start(message: Message, state: FSMContext):
-    """Регистрирует пользователя и отправляет помощь по боту"""
+    """To start, register the user and show the description"""
     await state.clear()
     await on_help(message)
     answer_message, builder = await build_inline_keyboard_utc_offset()

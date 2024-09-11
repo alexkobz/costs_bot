@@ -19,10 +19,11 @@ router = Router()
 
 @router.message(Command('excel', prefix="/"))
 async def on_excel(message: Message, state: FSMContext):
-    """Show excel report"""
+    """To export the costs to excel file"""
     builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
     for period in excel_period:
         builder.add(InlineKeyboardButton(callback_data=period, text=excel_period[period]))
+    builder.adjust(2)
     await message.answer(text="Select period:",
                          reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(Form.date_start)
@@ -53,6 +54,8 @@ async def excel_period_callback(call: CallbackQuery, state: FSMContext):
             date_start: date = today - timedelta(days=today.weekday())
         case "excel_month":
             date_start: date = (today - offsets.MonthBegin(n=1)).to_pydatetime().date()
+        case "excel_all":
+            date_start: date = date(1900, 1, 1)
         case "excel_custom":
             await call.message.delete()
             await call.message.answer(
@@ -62,6 +65,7 @@ async def excel_period_callback(call: CallbackQuery, state: FSMContext):
             await state.set_state(Form.date_start)
             return
         case _:
+            await call.message.delete()
             raise Exception
 
     await state.clear()
