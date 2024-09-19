@@ -11,7 +11,7 @@ from helpers.get_utc_offset import get_utc_offset
 
 
 async def excel_report(call: CallbackQuery, state: FSMContext,
-                       date_start=date(2000, 1, 1), date_finish=date.today()):
+                       date_start=date(1900, 1, 1), date_finish=date.today()):
     user: User = call.from_user
     try:
         utc_offset_minutes, answer_message, builder = await get_utc_offset(user=user)
@@ -41,8 +41,9 @@ async def excel_report(call: CallbackQuery, state: FSMContext,
         await call.message.answer("There are no costs")
         return
     report_df["Created"] = pd.to_datetime(report_df["Created"])
-    report_df["Date"] = report_df["Created"].dt.date
-    report_df["Time"] = report_df["Created"].dt.time
+    date_start: date = report_df["Created"].min().date()
+    report_df["Date"] = report_df["Created"].dt.strftime("%Y-%m-%d")
+    report_df["Time"] = report_df["Created"].dt.strftime("%H:%M:%S")
     report_df["Category"] = report_df["Category"].str.title()
     pivot: pd.DataFrame = pd.pivot_table(report_df, index=["Date", "Time", "Category"], values=["Amount", "id"])
     pivot["id"] = pivot["id"].astype(int)

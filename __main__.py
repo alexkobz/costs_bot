@@ -10,12 +10,12 @@ Commands:
     /add - Add the cost
     /delete - Delete the last cost
     /deleteid - Delete the cost by id
-    /editid - Edit the last cost by id
+    /editid - Edit the cost by id
     /report - Show report
     /excel - Export report in Excel file
     /last - Show the last 10 costs
     /help - Show help
-    /cancel - Change the timezone
+    /cancel - Cancel command
 """
 
 __author__ = "Alexander Kobzar"
@@ -23,9 +23,9 @@ __contact__ = "alexanderkobzarrr@gmail.com"
 __github__ = "alexkobz"
 __maintainer__ = "developer"
 __created__ = "01-09-2024"
-__modified__ = "01-09-2024"
+__modified__ = "19-09-2024"
 __status__ = "Production"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 import asyncio
 import logging
