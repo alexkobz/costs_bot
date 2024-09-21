@@ -26,10 +26,10 @@ async def on_excel(message: Message, state: FSMContext):
     builder.adjust(2)
     await message.answer(text="Select period:",
                          reply_markup=builder.as_markup(resize_keyboard=True))
-    await state.set_state(Form.date_start)
+    await state.set_state(Form.date_start_excel)
 
 
-@router.callback_query(F.data.startswith("excel_"), StateFilter(Form.date_start))
+@router.callback_query(F.data.startswith("excel_"), StateFilter(Form.date_start_excel))
 async def excel_period_callback(call: CallbackQuery, state: FSMContext):
     user: User = call.from_user
     try:
@@ -63,7 +63,7 @@ async def excel_period_callback(call: CallbackQuery, state: FSMContext):
                 "Please select a start date:",
                 reply_markup=await SimpleCalendar().start_calendar(year=today.year, month=today.month)
             )
-            await state.set_state(Form.date_start)
+            await state.set_state(Form.date_start_excel)
             return
         case _:
             await call.message.delete()
