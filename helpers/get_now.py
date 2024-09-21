@@ -3,12 +3,12 @@ from datetime import datetime as dt, timedelta, timezone, date
 
 async def get_now(utc_offset_minutes: int) -> dt:
     """Возвращает сегодняшний datetime с учётом временной зоны"""
-    return dt.now(tz=timezone(timedelta(minutes=utc_offset_minutes)))
+    return dt.now(tz=timezone.utc) + timedelta(minutes=utc_offset_minutes-180)
 
 
 async def get_today(utc_offset_minutes: int) -> date:
     """Возвращает сегодняшний date с учётом временной зоны"""
-    return (dt.now(tz=timezone(timedelta(minutes=utc_offset_minutes)))).date()
+    return (dt.now(tz=timezone.utc) + timedelta(minutes=utc_offset_minutes-180)).date()
 
 
 async def get_now_str(utc_offset_minutes: int) -> str:

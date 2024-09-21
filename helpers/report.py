@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import date, datetime as dt
+from datetime import date
 from matplotlib.axes._axes import Axes
 from matplotlib.figure import Figure
 from prettytable import PrettyTable
@@ -15,7 +15,7 @@ from helpers.get_utc_offset import get_utc_offset
 
 
 async def report(call: CallbackQuery, state: FSMContext,
-                 date_start=date(2000, 1, 1), date_finish=date.today()):
+                 date_start=date(2000, 1, 1), date_finish=date(9999, 1, 1)):
     user: User = call.from_user
     try:
         utc_offset_minutes, answer_message, builder = await get_utc_offset(user=user)

@@ -56,6 +56,7 @@ async def excel_period_callback(call: CallbackQuery, state: FSMContext):
             date_start: date = (today - offsets.MonthBegin(n=1)).to_pydatetime().date()
         case "excel_all":
             date_start: date = date(1900, 1, 1)
+            date_finish: date = date(9999, 1, 1)
         case "excel_custom":
             await call.message.delete()
             await call.message.answer(
