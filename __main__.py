@@ -23,9 +23,9 @@ __contact__ = "alexanderkobzarrr@gmail.com"
 __github__ = "alexkobz"
 __maintainer__ = "developer"
 __created__ = "01-09-2024"
-__modified__ = "19-09-2024"
+__modified__ = "21-09-2024"
 __status__ = "Production"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 import asyncio
 import logging
