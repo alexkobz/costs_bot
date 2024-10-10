@@ -33,8 +33,8 @@ async def report(call: CallbackQuery, state: FSMContext,
     except OperationalError:
         await call.message.answer("Please try again later")
         return
-    except Exception:
-        await call.message.answer("Something went wrong")
+    except Exception as e:
+        await call.message.answer(str(e))
         return
     finally:
         cursor.close()

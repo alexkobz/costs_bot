@@ -21,15 +21,15 @@ async def on_custom_start_date_report(call: CallbackQuery,
                                       callback_data: CallbackData,
                                       state: FSMContext):
     date_start = await process_custom_start_date(call, callback_data, state)
-    await state.update_data(date_start_report=date_start)
-    await state.set_state(Form.date_finish_report)
+    if date_start is not None:
+        await state.update_data(date_start_report=date_start)
+        await state.set_state(Form.date_finish_report)
 
 
 @router.callback_query(SimpleCalendarCallback.filter(), StateFilter(Form.date_finish_report))
 async def on_custom_finish_date_report(call: CallbackQuery,
                                        callback_data: CallbackData,
                                        state: FSMContext):
-
     date_finish: date = await process_custom_finish_date(call, callback_data, state)
     state_data: Dict[str, Any] = await state.get_data()
     date_start: date = state_data.get("date_start_report", date(1900, 1, 1))
@@ -44,15 +44,15 @@ async def on_custom_start_date_excel(call: CallbackQuery,
                                      callback_data: CallbackData,
                                      state: FSMContext):
     date_start = await process_custom_start_date(call, callback_data, state)
-    await state.update_data(date_start_excel=date_start)
-    await state.set_state(Form.date_finish_excel)
+    if date_start is not None:
+        await state.update_data(date_start_excel=date_start)
+        await state.set_state(Form.date_finish_excel)
 
 
 @router.callback_query(SimpleCalendarCallback.filter(), StateFilter(Form.date_finish_excel))
 async def on_custom_finish_date_excel(call: CallbackQuery,
                                       callback_data: CallbackData,
                                       state: FSMContext):
-
     date_finish: date = await process_custom_finish_date(call, callback_data, state)
     state_data: Dict[str, Any] = await state.get_data()
     date_start: date = state_data.get("date_start_excel", date(1900, 1, 1))
